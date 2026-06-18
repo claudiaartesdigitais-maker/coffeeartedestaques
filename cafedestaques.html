@@ -1,1 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mural de Destaques - CoffeeArt</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    :root {
+      --cafe-dark: #4a332d;
+      --cafe-light: #fff4e6;
+      --accent: #d4a373;
+    }
 
+    body, html { 
+      margin: 0; padding: 0; width: 100%; height: 100%;
+      background: var(--cafe-light);
+      font-family: 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header { 
+      width: 100%; display: flex; flex-direction: column; align-items: center; padding: 20px 0 10px 0;
+    }
+    .mural-titulo {
+      width: 90%; max-width: 600px; background-color: var(--cafe-dark); color: var(--accent);
+      padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center;
+    }
+    .mural-titulo span { font-size: 18px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; }
+    
+    /* CONTAINER DOS CARDS */
+    .mural-container {
+      display: flex; flex-direction: column; align-items: center; gap: 25px; padding: 20px 10px 50px 10px;
+    }
+
+    /* CARD DESTAQUE AMPLIAÇÃO */
+    .card-cliente { 
+      border-radius: 20px; overflow: hidden; background: #ffffff; border: 1px solid #efe4d8; 
+      position: relative; box-shadow: 0 8px 20px rgba(74, 51, 45, 0.1); 
+      width: 360px; display: flex; flex-direction: column;
+    }
+
+    /* CONTAINER DA FOTO/VÍDEO */
+    .media-container {
+      width: 100%; height: 450px; position: relative; background: #000;
+    }
+    .media-container iframe, .media-container img {
+      width: 100%; height: 100%; object-fit: cover; border: none; display: block;
+    }
+
+    /* SELO DE PONTUAÇÃO */
+    .badge-pontuacao {
+      position: absolute; top: 15px; left: 15px;
+      background: var(--cafe-dark); color: var(--accent);
+      padding: 6px 14px; border-radius: 20px;
+      font-size: 13px; font-weight: bold; border: 1px solid var(--accent);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 12;
+    }
+
+    /* BOTÃO CURTIR + CONTADOR */
+    .container-curtir {
+      position: absolute; top: 15px; right: 15px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 8px 14px; border-radius: 20px;
+      display: flex; align-items: center; gap: 6px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 12;
+    }
+    .btn-curtir {
+      background: none; border: none; padding: 0;
+      font-size: 20px; color: #888; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s ease;
+    }
+    .btn-curtir.curtido { color: #e63946; }
+    .btn-curtir:active { transform: scale(0.8); }
+    .contador-numero {
+      font-size: 14px; font-weight: bold; color: var(--cafe-dark); font-family: sans-serif;
+    }
+
+    /* CORPO DO TEXTO DO CLIENTE */
+    .card-corpo { 
+      padding: 20px; background: white; display: flex; flex-direction: column; gap: 6px;
+    }
+    .cliente-nome { 
+      font-size: 17px; font-weight: bold; color: var(--cafe-dark); margin: 0; 
+    }
+    .cliente-mensagem { 
+      font-size: 16px; color: #000000; line-height: 1.5; margin: 5px 0 0 0; 
+      text-align: justify; word-break: break-word; font-weight: 500;
+    }
+
+    #loading {
+      text-align: center; color: var(--cafe-dark); font-weight: bold; margin-top: 40px; font-size: 16px;
+    }
+    
+    /* 📱 AJUSTES EXTRA PARA CELULARES PEQUENOS */
+    @media (max-width: 380px) {
+      .card-cliente { width: 94%; }
+      .media-container { height: 390px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="mural-titulo">
+        <span>📸 Mural de Clientes CoffeeArt</span>
+    </div>
+  </header>
+
+  <div id="loading"><i class="fas fa-coffee fa-spin"></i> Carregando momentos dos clientes...</div>
+  
+  <div class="mural-container" id="mural"></div>
+
+  <script>
+    // URL DO SEU GOOGLE APPS SCRIPT ATUALIZADO (Aba: Form_Responses)
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz1eRarDZWVkf7eTCrBfBOQI0ZqgtwA8QBtEz7zhj1Gs6ppGae_7vDEfuXm3CpriUmK/exec';
+
+    async function carregarMural() {
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL);
+        const posts = await res.json();
+        
+        const container = document.getElementById("mural");
+        document.getElementById("loading").style.display = "none";
+        
+        if (posts.length === 0) {
+          container.innerHTML = "<p style='color:#4a332d; font-weight:bold;'>Nenhuma foto postada ainda. Seja o primeiro!</p>";
+          return;
+        }
+
+        container.innerHTML = posts.map(post => {
+          const jaCurtido = localStorage.getItem(`cafe_curt_${post.linha}`) === 'sim';
+          const classeCoracao = jaCurtido ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+          const classeBotao = jaCurtido ? 'btn-curtir curtido' : 'btn-curtir';
+          
+          // Renderiza Imagem ou Vídeo (Iframe do Drive)
+          let midiaHTML = `<img src="${post.link}" onerror="this.src='https://via.placeholder.com/360x450?text=CoffeeArt'">`;
+          if (post.tipo === "VIDEO") {
+            midiaHTML = `<iframe src="${post.link}" allow="autoplay"></iframe>`;
+          }
+
+          return `
+            <div class="card-cliente">
+              <!-- Selo de Pontos -->
+              <div class="badge-pontuacao">⭐ Pontos: ${post.pontuacao}</div>
+              
+              <!-- Sistema de Curtir -->
+              <div class="container-curtir">
+                  <button class="${classeBotao}" onclick="curtirPost(this, ${post.linha})">
+                    <i class="${classeCoracao}"></i>
+                  </button>
+                  <span class="contador-numero" id="count-${post.linha}">${post.curtidas}</span>
+              </div>
+
+              <div class="media-container">
+                ${midiaHTML}
+              </div>
+
+              <div class="card-corpo">
+                <h3 class="cliente-nome">👤 ${post.nome}</h3>
+                ${post.mensagem ? `<p class="cliente-mensagem">${post.mensagem}</p>` : ''}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+      } catch (e) {
+        console.error("Erro ao carregar o mural:", e);
+        document.getElementById("loading").innerHTML = "❌ Erro ao carregar o mural. Verifique a URL do Script.";
+      }
+    }
+
+    async function curtirPost(btn, linha) {
+      const icone = btn.querySelector('i');
+      const txtContador = document.getElementById(`count-${linha}`);
+      const jaCurtido = localStorage.getItem(`cafe_curt_${linha}`) === 'sim';
+      
+      let atual = parseInt(txtContador.innerText) || 0;
+
+      // Impede curtir duas vezes localmente
+      if (jaCurtido) return;
+
+      btn.classList.add('curtido');
+      icone.className = 'fa-solid fa-heart';
+      localStorage.setItem(`cafe_curt_${linha}`, 'sim');
+      txtContador.innerText = atual + 1;
+
+      // Envia comando via POST para somar na planilha na linha exata
+      try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: JSON.stringify({ linha: linha })
+        });
+      } catch (err) { console.error("Erro ao computar curtida:", err); }
+    }
+
+    // Inicializa o Mural
+    carregarMural();
+  </script>
+</body>
+</html>
