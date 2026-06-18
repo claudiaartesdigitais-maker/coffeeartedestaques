@@ -1,1 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CoffeeArt - Painel de Engajamento</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root {
+            --cafe-dark: #4a332d;
+            --cafe-light: #fff4e6;
+            --accent: #d4a373;
+        }
 
+        body { 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            background: var(--cafe-light); 
+            padding: 20px; 
+            display: flex; 
+            justify-content: center;
+            margin: 0;
+        }
+        
+        .card { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 15px; 
+            box-shadow: 0 4px 10px rgba(74, 51, 45, 0.1); 
+            width: 100%; 
+            max-width: 400px; 
+            text-align: center; 
+            border: 1px solid #efe4d8;
+        }        
+        
+        h2 { 
+            color: var(--cafe-dark); 
+            margin-bottom: 10px; 
+            text-transform: uppercase; 
+            font-size: 18px; 
+            letter-spacing: 1px;
+        }
+        
+        label { 
+            display: block; 
+            margin-bottom: 5px; 
+            font-weight: bold; 
+            color: #555; 
+            text-align: left; 
+            font-size: 14px;
+        }
+        
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            margin-bottom: 15px; 
+            border: 1px solid #ccc; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 16px; 
+        }
+        
+        .btn { 
+            width: 100%; 
+            padding: 15px; 
+            border: none; 
+            border-radius: 8px; 
+            color: white; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-size: 14px; 
+            text-transform: uppercase; 
+            margin-bottom: 15px; 
+            transition: 0.3s; 
+            display: inline-flex; 
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none; 
+            box-sizing: border-box; 
+        }      
+        
+        .btn-google { 
+            background: #4285F4; /* Azul Oficial do Google */
+        }
+        .btn-destaque { 
+            background: var(--cafe-dark); 
+            border: 2px solid var(--accent);
+            color: white;
+        }
+        
+        .btn:hover { 
+            opacity: 0.9; 
+            transform: scale(1.02); 
+        }
+        
+        #status { 
+            font-weight: bold; 
+            margin-top: 10px; 
+            padding: 10px; 
+            border-radius: 5px; 
+            display: none; 
+            font-size: 14px; 
+        }    
+        
+        hr { 
+            border: 0; 
+            border-top: 2px dashed #efe4d8; 
+            margin: 25px 0; 
+        }  
+        
+        p { 
+            font-size: 14px; 
+            color: #555; 
+            margin-bottom: 15px; 
+            line-height: 1.4; 
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <!-- SEÇÃO 1: GOOGLE AVALIAÇÕES -->
+    <h2><i class="fab fa-google" style="color: #4285F4;"></i> Google Avaliações</h2>
+    <p>Sua opinião é fundamental para a CoffeeArt! Clique no botão abaixo para deixar sua avaliação e estrelas direto no nosso perfil do Google:</p>
+    
+    <!-- SUBSTITUA O LINK ABAIXO PELO LINK DE AVALIAÇÃO DO SEU GOOGLE MEU NEGÓCIO -->
+    <a href="https://g.page/r/SEU_LINK_DO_GOOGLE_AQUI/review" target="_blank" class="btn btn-google">
+        <i class="fas fa-star" style="color: #FBBC05;"></i> Publicar no Google
+    </a>
+
+    <hr>
+
+    <!-- SEÇÃO 2: DESTAQUES DOS CLIENTES -->
+    <h2><i class="fas fa-camera"></i> Destaques da Cafeteria</h2>
+    <p>Quer ver sua foto em nosso painel oficial, exibir sua <b>Pontuação</b> e acumular <b>Curtidas</b> dos outros clientes?</p>
+    
+    <!-- LINK DO GOOGLE FORMS DA CAFETERIA -->
+    <a href="https://forms.gle/SEU_NOVO_FORMULARIO_DA_CAFETERIA" target="_blank" class="btn btn-destaque">
+        <i class="fas fa-upload"></i> Enviar Foto do Meu Café
+    </a>
+    
+    <div id="status"></div>
+</div>
+
+</body>
+</html>
